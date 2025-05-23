@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
 import * as Location from 'expo-location';
 import { PlacesContext } from '../context/PlacesContext';
 import { useNavigation } from '@react-navigation/native';
@@ -38,28 +38,37 @@ export default function AddPlaceScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Nazwa miejsca"
-        value={title}
-        onChangeText={setTitle}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Opis (opcjonalnie)"
-        value={description}
-        onChangeText={setDescription}
-      />
-      <Button title="Zapisz miejsce" onPress={handleSave} />
-    </View>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nazwa miejsca"
+          value={title}
+          onChangeText={setTitle}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Opis (opcjonalnie)"
+          value={description}
+          onChangeText={setDescription}
+        />
+        <Button title="Zapisz miejsce" onPress={handleSave} />
+      </View>
+    </ScrollView>
   );
 }
 
+const screenWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
   container: {
     padding: 20,
-    flex: 1,
+    width: screenWidth > 400 ? 380 : '100%',
+    alignSelf: 'center',
     backgroundColor: '#fff',
   },
   input: {

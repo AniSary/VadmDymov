@@ -1,50 +1,60 @@
 import React, { useContext } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Button } from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PlacesContext } from '../context/PlacesContext';
 
 export default function HomeScreen() {
-  const navigation = useNavigation();
   const { miejsca } = useContext(PlacesContext);
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.placeItem}
-      onPress={() => navigation.navigate('PlaceDetails', { placeId: item.id })}
-    >
-      <Text style={styles.title}>{item.tytul}</Text>
-      <Text style={styles.subtitle}>{item.opis}</Text>
-    </TouchableOpacity>
-  );
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
-      <Button title="Dodaj miejsce" onPress={() => navigation.navigate('AddPlace')} />
-
-      {miejsca.length === 0 ? (
-        <Text style={styles.empty}>Brak miejsc.</Text>
-      ) : (
-        <FlatList
-          data={miejsca}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-        />
-      )}
+      <FlatList
+        ListHeaderComponent={
+          <View>
+            <Button title="Dodaj miejsce" onPress={() => navigation.navigate('AddPlace')} />
+            {miejsca.length === 0 && (
+              <Text style={styles.emptyText}>Brak zapisanych miejsc</Text>
+            )}
+          </View>
+        }
+        data={miejsca}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => navigation.navigate('PlaceDetails', { placeId: item.id })}>
+            <View style={styles.placeItem}>
+              <Text style={styles.placeTitle}>{item.tytul}</Text>
+              <Text>{item.opis}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 }
 
+const screenWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
-  container: { padding: 20, flex: 1, backgroundColor: '#fff' },
+  container: {
+    padding: 20,
+    width: screenWidth > 400 ? 380 : '100%',
+    alignSelf: 'center',
+    backgroundColor: '#fff',
+    flex: 1,
+  },
+  emptyText: {
+    marginTop: 20,
+    fontStyle: 'italic',
+    textAlign: 'center',
+  },
   placeItem: {
     padding: 15,
-    borderBottomColor: '#ccc',
     borderBottomWidth: 1,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    marginTop: 10,
+    borderBottomColor: '#ccc',
   },
-  title: { fontWeight: 'bold', fontSize: 16 },
-  subtitle: { fontSize: 14, color: '#666', marginBottom: 5 },
-  empty: { textAlign: 'center', marginTop: 20, fontSize: 16 },
+  placeTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });
