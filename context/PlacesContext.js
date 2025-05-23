@@ -6,13 +6,14 @@ export const PlacesContext = createContext();
 export const PlacesProvider = ({ children }) => {
   const [miejsca, setMiejsca] = useState([]);
 
-  // 1. Wczytanie danych z AsyncStorage po starcie
+  // 🔄 Wczytywanie danych z AsyncStorage przy starcie aplikacji
   useEffect(() => {
     const wczytajMiejsca = async () => {
       try {
         const zapisane = await AsyncStorage.getItem('miejsca');
         if (zapisane) {
           setMiejsca(JSON.parse(zapisane));
+          console.log("✅ Przywrócono miejsca z AsyncStorage");
         }
       } catch (err) {
         console.log('❌ Błąd przy wczytywaniu miejsc:', err.message);
@@ -22,7 +23,7 @@ export const PlacesProvider = ({ children }) => {
     wczytajMiejsca();
   }, []);
 
-  // 2. Dodanie miejsca + zapis do AsyncStorage
+  // ➕ Dodawanie miejsca + zapis do AsyncStorage
   const dodajMiejsce = async (tytul, opis, lokalizacja) => {
     const nowe = {
       id: Date.now().toString(),
@@ -34,8 +35,10 @@ export const PlacesProvider = ({ children }) => {
 
     const zaktualizowane = [nowe, ...miejsca];
     setMiejsca(zaktualizowane);
+
     try {
       await AsyncStorage.setItem('miejsca', JSON.stringify(zaktualizowane));
+      console.log("💾 Miejsce zapisane offline");
     } catch (err) {
       console.log('❌ Błąd zapisu do AsyncStorage:', err.message);
     }
