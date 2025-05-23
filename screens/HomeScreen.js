@@ -1,31 +1,31 @@
 import React, { useContext } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet } from 'react-native';
-import { PlacesContext } from '../context/PlacesContext';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { PlacesContext } from '../context/PlacesContext';
 
 export default function HomeScreen() {
-  const { places } = useContext(PlacesContext);
   const navigation = useNavigation();
+  const { miejsca } = useContext(PlacesContext);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.placeItem}
       onPress={() => navigation.navigate('PlaceDetails', { placeId: item.id })}
     >
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.subtitle}>{item.description || 'Brak opisu'}</Text>
+      <Text style={styles.title}>{item.tytul}</Text>
+      <Text style={styles.subtitle}>{item.opis}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
       <Button title="Dodaj miejsce" onPress={() => navigation.navigate('AddPlace')} />
-      
-      {places.length === 0 ? (
-        <Text style={styles.empty}>Brak zapisanych miejsc.</Text>
+
+      {miejsca.length === 0 ? (
+        <Text style={styles.empty}>Brak miejsc.</Text>
       ) : (
         <FlatList
-          data={places}
+          data={miejsca}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
         />
@@ -35,31 +35,16 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  empty: {
-    textAlign: 'center',
-    fontSize: 16,
-    marginTop: 20,
-    color: '#666',
-  },
+  container: { padding: 20, flex: 1, backgroundColor: '#fff' },
   placeItem: {
     padding: 15,
     borderBottomColor: '#ccc',
     borderBottomWidth: 1,
     backgroundColor: '#f9f9f9',
-    borderRadius: 6,
-    marginBottom: 10,
+    borderRadius: 8,
+    marginTop: 10,
   },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-  },
+  title: { fontWeight: 'bold', fontSize: 16 },
+  subtitle: { fontSize: 14, color: '#666', marginBottom: 5 },
+  empty: { textAlign: 'center', marginTop: 20, fontSize: 16 },
 });
