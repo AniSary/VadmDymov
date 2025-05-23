@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 export default function AddPlaceScreen() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const { addPlace } = useContext(PlacesContext);
+  const { dodajMiejsce } = useContext(PlacesContext);
   const navigation = useNavigation();
 
   const handleSave = async () => {
@@ -29,7 +29,7 @@ export default function AddPlaceScreen() {
         lng: location.coords.longitude,
       };
 
-      addPlace(title, description, coords);
+      dodajMiejsce(title, description, coords);
       navigation.goBack();
     } catch (error) {
       console.error(error);

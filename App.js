@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import AppNavigator from './navigation/AppNavigator';
 import { StatusBar } from 'expo-status-bar';
+import AppNavigator from './navigation/AppNavigator';
 import { PlacesProvider } from './context/PlacesContext';
 
 export default function App() {
