@@ -3,12 +3,12 @@ import { View, Text, StyleSheet } from 'react-native';
 import { PlacesContext } from '../context/PlacesContext';
 
 export default function PlaceDetailsScreen({ route }) {
+  const { miejsca } = useContext(PlacesContext);
   const { placeId } = route.params;
-  const { places } = useContext(PlacesContext);
 
-  const place = places.find((p) => p.id === placeId);
+  const miejsce = miejsca.find((m) => m.id === placeId);
 
-  if (!place) {
+  if (!miejsce) {
     return (
       <View style={styles.container}>
         <Text style={styles.error}>Nie znaleziono miejsca.</Text>
@@ -18,33 +18,18 @@ export default function PlaceDetailsScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{place.title}</Text>
-      <Text style={styles.text}>Opis: {place.description || 'brak'}</Text>
-      <Text style={styles.text}>Szerokość: {place.location.lat}</Text>
-      <Text style={styles.text}>Długość: {place.location.lng}</Text>
-      <Text style={styles.text}>Data dodania: {new Date(place.date).toLocaleString()}</Text>
+      <Text style={styles.title}>{miejsce.tytul}</Text>
+      <Text style={styles.desc}>{miejsce.opis}</Text>
+      <Text>📍 Szerokość: {miejsce.wspolrzedne.lat}</Text>
+      <Text>📍 Długość: {miejsce.wspolrzedne.lng}</Text>
+      <Text>📅 Data dodania: {miejsce.data}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  text: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  error: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: 'red',
-  },
+  container: { padding: 20, flex: 1, backgroundColor: '#fff' },
+  title: { fontWeight: 'bold', fontSize: 20, marginBottom: 10 },
+  desc: { fontSize: 16, marginBottom: 10 },
+  error: { fontSize: 18, color: 'crimson', textAlign: 'center' },
 });
