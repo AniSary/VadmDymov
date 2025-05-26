@@ -1,8 +1,9 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
+import { View, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
 import * as Location from 'expo-location';
 import { PlacesContext } from '../context/PlacesContext';
 import { useNavigation } from '@react-navigation/native';
+import { TextInput, Button } from 'react-native-paper';
 
 export default function AddPlaceScreen() {
   const [title, setTitle] = useState('');
@@ -41,18 +42,24 @@ export default function AddPlaceScreen() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <TextInput
-          style={styles.input}
-          placeholder="Nazwa miejsca"
+          mode="outlined"
+          label="Nazwa miejsca"
           value={title}
           onChangeText={setTitle}
+          style={styles.input}
         />
         <TextInput
-          style={styles.input}
-          placeholder="Opis (opcjonalnie)"
+          mode="outlined"
+          label="Opis (opcjonalnie)"
           value={description}
           onChangeText={setDescription}
+          multiline
+          numberOfLines={3}
+          style={styles.input}
         />
-        <Button title="Zapisz miejsce" onPress={handleSave} />
+        <Button mode="contained" onPress={handleSave}>
+          Zapisz miejsce
+        </Button>
       </View>
     </ScrollView>
   );
@@ -70,12 +77,9 @@ const styles = StyleSheet.create({
     width: screenWidth > 400 ? 380 : '100%',
     alignSelf: 'center',
     backgroundColor: '#fff',
+    gap: 20,
   },
   input: {
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 1,
-    marginBottom: 15,
-    paddingVertical: 8,
     fontSize: 16,
   },
 });
