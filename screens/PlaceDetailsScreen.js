@@ -33,19 +33,20 @@ const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
+    padding: 20,
   },
   container: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
     padding: 20,
+    elevation: 2,
     width: screenWidth > 400 ? 380 : '100%',
     alignSelf: 'center',
-    backgroundColor: '#fff',
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   coord: {
     marginTop: 10,

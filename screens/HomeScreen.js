@@ -37,18 +37,12 @@ export default function HomeScreen() {
       </Button>
 
       {miejsca.length === 0 ? (
-        <Text style={styles.emptyText}>Brak zapisanych miejsc</Text>
+        <Text style={styles.empty}>Brak zapisanych miejsc</Text>
       ) : (
         <FlatList
           data={miejsca}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <PlaceItem item={item} onPress={handleItemPress} />
-          )}
-          initialNumToRender={5}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          removeClippedSubviews={true}
+          renderItem={({ item }) => <PlaceItem item={item} onPress={handleItemPress} />}
         />
       )}
     </View>
@@ -59,18 +53,21 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     alignSelf: 'center',
-    backgroundColor: '#fff',
     flex: 1,
+    backgroundColor: '#fff',
   },
   addButton: {
     marginBottom: 20,
   },
-  emptyText: {
-    fontStyle: 'italic',
-    textAlign: 'center',
-    marginTop: 30,
-  },
   placeItem: {
-    marginVertical: 6,
+    marginBottom: 10,
+    borderColor: '#ccc',
+    borderWidth: 1,
+  },
+  empty: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#888',
   },
 });

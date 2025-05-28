@@ -25,61 +25,64 @@ export default function AddPlaceScreen() {
       }
 
       const location = await Location.getCurrentPositionAsync({});
-      const coords = {
+      await dodajMiejsce(title, description, {
         lat: location.coords.latitude,
         lng: location.coords.longitude,
-      };
+      });
 
-      dodajMiejsce(title, description, coords);
       navigation.goBack();
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Błąd', 'Nie udało się pobrać lokalizacji');
+    } catch (err) {
+      Alert.alert('Błąd', err.message);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <ScrollView contentContainerStyle={styles.scroll}>
       <View style={styles.container}>
         <TextInput
-          mode="outlined"
-          label="Nazwa miejsca"
+          label="Tytuł"
           value={title}
           onChangeText={setTitle}
+          mode="outlined"
           style={styles.input}
         />
         <TextInput
-          mode="outlined"
-          label="Opis (opcjonalnie)"
+          label="Opis"
           value={description}
           onChangeText={setDescription}
+          mode="outlined"
           multiline
-          numberOfLines={3}
           style={styles.input}
         />
-        <Button mode="contained" onPress={handleSave}>
-          Zapisz miejsce
+        <Button
+          mode="contained"
+          onPress={handleSave}
+          style={styles.button}
+          buttonColor="#6200ee"
+        >
+          Zapisz
         </Button>
       </View>
     </ScrollView>
   );
 }
 
-const screenWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
-  scrollContainer: {
+  scroll: {
     flexGrow: 1,
     justifyContent: 'center',
+    padding: 20,
   },
   container: {
-    padding: 20,
-    width: screenWidth > 400 ? 380 : '100%',
-    alignSelf: 'center',
     backgroundColor: '#fff',
-    gap: 20,
+    borderRadius: 10,
+    padding: 20,
+    elevation: 2,
   },
   input: {
-    fontSize: 16,
+    marginBottom: 15,
+  },
+  button: {
+    marginTop: 10,
   },
 });
