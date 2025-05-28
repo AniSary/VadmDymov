@@ -1,11 +1,21 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Dimensions, Button, Share } from 'react-native';
 import { PlacesContext } from '../context/PlacesContext';
 
 export default function PlaceDetailsScreen({ route }) {
   const { placeId } = route.params;
   const { miejsca } = useContext(PlacesContext);
   const place = miejsca.find((m) => m.id === placeId);
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: `📍 ${place.tytul}\n\n${place.opis}\n\nLokalizacja: ${place.wspolrzedne.lat.toFixed(4)}, ${place.wspolrzedne.lng.toFixed(4)}`,
+      });
+    } catch (error) {
+      console.error('❌ Błąd udostępniania:', error.message);
+    }
+  };
 
   if (!place) {
     return (
@@ -24,36 +34,11 @@ export default function PlaceDetailsScreen({ route }) {
           Lokalizacja: {place.wspolrzedne.lat.toFixed(4)}, {place.wspolrzedne.lng.toFixed(4)}
         </Text>
         <Text style={styles.date}>Dodano: {place.data}</Text>
+
+        <View style={{ marginTop: 20 }}>
+          <Button title="📤 Udostępnij to miejsce" onPress={handleShare} />
+        </View>
       </View>
     </ScrollView>
   );
 }
-
-const screenWidth = Dimensions.get('window').width;
-
-const styles = StyleSheet.create({
-  scrollContainer: {
-    padding: 20,
-  },
-  container: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 20,
-    elevation: 2,
-    width: screenWidth > 400 ? 380 : '100%',
-    alignSelf: 'center',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  coord: {
-    marginTop: 10,
-    fontStyle: 'italic',
-  },
-  date: {
-    marginTop: 5,
-    color: '#888',
-  },
-});
