@@ -10,7 +10,7 @@ export default function PlaceDetailsScreen({ route }) {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `📍 ${place.tytul}\n\n${place.opis}\n\nLokalizacja: ${place.wspolrzedne.lat.toFixed(4)}, ${place.wspolrzedne.lng.toFixed(4)}`,
+        message: `📍 ${place.tytul}\n\n${place.opis}\n\nLokalizacja: ${place.wspolrzedne.lat.toFixed(4)}, ${place.wspolrzedne.lng.toFixed(4)}`
       });
     } catch (error) {
       console.error('❌ Błąd udostępniania:', error.message);
@@ -29,16 +29,35 @@ export default function PlaceDetailsScreen({ route }) {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <Text style={styles.title}>{place.tytul}</Text>
-        <Text>{place.opis}</Text>
-        <Text style={styles.coord}>
-          Lokalizacja: {place.wspolrzedne.lat.toFixed(4)}, {place.wspolrzedne.lng.toFixed(4)}
-        </Text>
-        <Text style={styles.date}>Dodano: {place.data}</Text>
-
-        <View style={{ marginTop: 20 }}>
-          <Button title="📤 Udostępnij to miejsce" onPress={handleShare} />
+        <Text style={styles.description}>{place.opis}</Text>
+        <Text>Lokalizacja: {place.wspolrzedne.lat.toFixed(4)}, {place.wspolrzedne.lng.toFixed(4)}</Text>
+        <View style={styles.button}>
+          <Button title="Udostępnij" onPress={handleShare} />
         </View>
       </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingBottom: 32,
+  },
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  description: {
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  button: {
+    marginTop: 16,
+  },
+});

@@ -13,7 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vadym.miejsca",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -33,6 +37,7 @@
       "eas": {
         "projectId": "bb8b52a7-84fb-439a-baa4-fad36811a77f"
       }
-    }
+    },
+    "owner": "anisarysan"
   }
 }

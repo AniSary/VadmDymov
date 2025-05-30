@@ -1,20 +1,16 @@
 module.exports = {
-  env: {
-    browser: true,
-    es2021: true,
-  },
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-    'prettier',
-  ],
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    ecmaVersion: 12,
-    sourceType: 'module',
+    requireConfigFile: false,
   },
   plugins: ['react'],
+  extends: ['plugin:react/recommended'],
   rules: {
     'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 'off',
+  },
+  env: {
+    browser: true,
+    node: true,
   },
 };
