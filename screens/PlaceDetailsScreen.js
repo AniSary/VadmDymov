@@ -1,63 +1,67 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions, Button, Share } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { PlacesContext } from '../context/PlacesContext';
 
-export default function PlaceDetailsScreen({ route }) {
+const PlaceDetailsScreen = () => {
+  const route = useRoute();
+  const navigation = useNavigation();
   const { placeId } = route.params;
-  const { miejsca } = useContext(PlacesContext);
-  const place = miejsca.find((m) => m.id === placeId);
+  const { places } = useContext(PlacesContext);
 
-  const handleShare = async () => {
-    try {
-      await Share.share({
-        message: `📍 ${place.tytul}\n\n${place.opis}\n\nLokalizacja: ${place.wspolrzedne.lat.toFixed(4)}, ${place.wspolrzedne.lng.toFixed(4)}`
-      });
-    } catch (error) {
-      console.error('❌ Błąd udostępniania:', error.message);
-    }
-  };
-
-  if (!place) {
-    return (
-      <View style={styles.container}>
-        <Text>Miejsce nie znalezione</Text>
-      </View>
-    );
-  }
+  const place = places.find(p => p.id === placeId);
+  if (!place) return <Text style={styles.error}>Место не найдено</Text>;
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <Text style={styles.title}>{place.tytul}</Text>
-        <Text style={styles.description}>{place.opis}</Text>
-        <Text>Lokalizacja: {place.wspolrzedne.lat.toFixed(4)}, {place.wspolrzedne.lng.toFixed(4)}</Text>
-        <View style={styles.button}>
-          <Button title="Udostępnij" onPress={handleShare} />
-        </View>
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <Text style={styles.title}>{place.name}</Text>
+      <Text style={styles.description}>{place.description}</Text>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={styles.backButtonText}>← Назад</Text>
+      </TouchableOpacity>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    paddingBottom: 32,
-  },
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#fefefe',
+    padding: 24,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 12,
+    color: '#222',
+    marginBottom: 14,
   },
   description: {
     fontSize: 16,
-    marginBottom: 12,
+    lineHeight: 24,
+    color: '#555',
   },
-  button: {
-    marginTop: 16,
+  backButton: {
+    marginTop: 30,
+    paddingVertical: 12,
+    borderRadius: 10,
+    backgroundColor: '#4a90e2',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  error: {
+    flex: 1,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: 'red',
+    fontSize: 18,
   },
 });
+
+export default PlaceDetailsScreen;

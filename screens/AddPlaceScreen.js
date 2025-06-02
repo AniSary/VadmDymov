@@ -1,88 +1,84 @@
 import React, { useState, useContext } from 'react';
-import { View, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
-import * as Location from 'expo-location';
-import { PlacesContext } from '../context/PlacesContext';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { TextInput, Button } from 'react-native-paper';
+import { PlacesContext } from '../context/PlacesContext';
 
-export default function AddPlaceScreen() {
-  const [title, setTitle] = useState('');
+const AddPlaceScreen = () => {
+  const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const { dodajMiejsce } = useContext(PlacesContext);
   const navigation = useNavigation();
+  const { addPlace } = useContext(PlacesContext);
 
-  const handleSave = async () => {
-    if (!title.trim()) {
-      Alert.alert('Błąd', 'Wprowadź nazwę miejsca');
-      return;
-    }
-
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Brak dostępu', 'Nie przyznano uprawnień do lokalizacji');
-        return;
-      }
-
-      const location = await Location.getCurrentPositionAsync({});
-      await dodajMiejsce(title, description, {
-        lat: location.coords.latitude,
-        lng: location.coords.longitude,
-      });
-
+  const handleAddPlace = () => {
+    if (name.trim()) {
+      addPlace({ name, description });
       navigation.goBack();
-    } catch (err) {
-      Alert.alert('Błąd', err.message);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scroll}>
-      <View style={styles.container}>
-        <TextInput
-          label="Tytuł"
-          value={title}
-          onChangeText={setTitle}
-          mode="outlined"
-          style={styles.input}
-        />
-        <TextInput
-          label="Opis"
-          value={description}
-          onChangeText={setDescription}
-          mode="outlined"
-          multiline
-          style={styles.input}
-        />
-        <Button
-          mode="contained"
-          onPress={handleSave}
-          style={styles.button}
-          buttonColor="#6200ee"
-        >
-          Zapisz
-        </Button>
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <Text style={styles.header}>Добавить место</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Название"
+        placeholderTextColor="#999"
+        value={name}
+        onChangeText={setName}
+      />
+      <TextInput
+        style={[styles.input, styles.textArea]}
+        placeholder="Описание"
+        placeholderTextColor="#999"
+        multiline
+        numberOfLines={4}
+        value={description}
+        onChangeText={setDescription}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleAddPlace}>
+        <Text style={styles.buttonText}>Сохранить</Text>
+      </TouchableOpacity>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  scroll: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
   container: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    flex: 1,
     padding: 20,
-    elevation: 2,
+    backgroundColor: '#fefefe',
+  },
+  header: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
   },
   input: {
-    marginBottom: 15,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 14,
+    fontSize: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: 'top',
   },
   button: {
+    backgroundColor: '#4a90e2',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
     marginTop: 10,
   },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
+
+export default AddPlaceScreen;
