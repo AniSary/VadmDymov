@@ -1,27 +1,49 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import React, { useState, useContext } from 'react';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
 import { PlacesContext } from '../context/PlacesContext';
 
-const PlaceDetailsScreen = () => {
-  const route = useRoute();
+const AddPlaceScreen = () => {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const navigation = useNavigation();
-  const { placeId } = route.params;
-  const { places } = useContext(PlacesContext);
+  const { addPlace } = useContext(PlacesContext);
 
-  const place = places.find(p => p.id === placeId);
-  if (!place) return <Text style={styles.error}>Место не найдено</Text>;
+  const handleAddPlace = () => {
+    if (name.trim()) {
+      addPlace({ name, description });
+      navigation.goBack();
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{place.name}</Text>
-      <Text style={styles.description}>{place.description}</Text>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
+      <Text style={styles.header}>Add Place</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Name"
+        placeholderTextColor="#999"
+        value={name}
+        onChangeText={setName}
+      />
+      <TextInput
+        style={[styles.input, styles.textArea]}
+        placeholder="Description"
+        placeholderTextColor="#999"
+        multiline
+        numberOfLines={4}
+        value={description}
+        onChangeText={setDescription}
+      />
+      <Button
+        mode="contained"
+        onPress={handleAddPlace}
+        style={styles.button}
+        labelStyle={styles.buttonText}
       >
-        <Text style={styles.backButtonText}>← Назад</Text>
-      </TouchableOpacity>
+        Save
+      </Button>
     </View>
   );
 };
@@ -29,39 +51,37 @@ const PlaceDetailsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
     backgroundColor: '#fefefe',
-    padding: 24,
   },
-  title: {
+  header: {
     fontSize: 26,
     fontWeight: 'bold',
-    color: '#222',
-    marginBottom: 14,
+    marginBottom: 20,
+    color: '#333',
   },
-  description: {
+  input: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 14,
     fontSize: 16,
-    lineHeight: 24,
-    color: '#555',
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
-  backButton: {
-    marginTop: 30,
-    paddingVertical: 12,
-    borderRadius: 10,
-    backgroundColor: '#4a90e2',
-    alignItems: 'center',
+  textArea: {
+    height: 120,
+    textAlignVertical: 'top',
   },
-  backButtonText: {
+  button: {
+    marginTop: 10,
+    borderRadius: 12,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
     color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  error: {
-    flex: 1,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    color: 'red',
-    fontSize: 18,
   },
 });
 
-export default PlaceDetailsScreen;
+export default AddPlaceScreen;

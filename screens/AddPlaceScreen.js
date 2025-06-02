@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
 import { PlacesContext } from '../context/PlacesContext';
 
 const AddPlaceScreen = () => {
@@ -18,26 +19,31 @@ const AddPlaceScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Добавить место</Text>
+      <Text style={styles.header}>Add Place</Text>
       <TextInput
         style={styles.input}
-        placeholder="Название"
+        placeholder="Name"
         placeholderTextColor="#999"
         value={name}
         onChangeText={setName}
       />
       <TextInput
         style={[styles.input, styles.textArea]}
-        placeholder="Описание"
+        placeholder="Description"
         placeholderTextColor="#999"
         multiline
         numberOfLines={4}
         value={description}
         onChangeText={setDescription}
       />
-      <TouchableOpacity style={styles.button} onPress={handleAddPlace}>
-        <Text style={styles.buttonText}>Сохранить</Text>
-      </TouchableOpacity>
+      <Button
+        mode="contained"
+        onPress={handleAddPlace}
+        style={styles.button}
+        labelStyle={styles.buttonText}
+      >
+        Save
+      </Button>
     </View>
   );
 };
@@ -68,16 +74,13 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   button: {
-    backgroundColor: '#4a90e2',
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
     marginTop: 10,
+    borderRadius: 12,
   },
   buttonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#fff',
   },
 });
 

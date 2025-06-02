@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
 import { PlacesContext } from '../context/PlacesContext';
 
 const HomeScreen = () => {
@@ -12,30 +13,33 @@ const HomeScreen = () => {
   }, []);
 
   const renderPlace = ({ item }) => (
-    <TouchableOpacity
-      style={styles.card}
+    <Button
+      mode="outlined"
       onPress={() => navigation.navigate('PlaceDetails', { placeId: item.id })}
+      style={styles.card}
+      labelStyle={styles.cardText}
     >
-      <Text style={styles.title}>{item.name}</Text>
-      <Text style={styles.description} numberOfLines={2}>{item.description}</Text>
-    </TouchableOpacity>
+      {item.name}
+    </Button>
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Места</Text>
+      <Text style={styles.header}>Places</Text>
       <FlatList
         data={places}
         renderItem={renderPlace}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.list}
       />
-      <TouchableOpacity
-        style={styles.addButton}
+      <Button
+        mode="contained"
         onPress={() => navigation.navigate('AddPlace')}
+        style={styles.addButton}
+        labelStyle={styles.addButtonText}
       >
-        <Text style={styles.addButtonText}>+ Добавить место</Text>
-      </TouchableOpacity>
+        + Add Place
+      </Button>
     </View>
   );
 };
@@ -56,40 +60,24 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 6,
-    elevation: 3,
+    borderRadius: 16,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 6,
-    color: '#222',
-  },
-  description: {
-    fontSize: 14,
-    color: '#666',
+  cardText: {
+    fontSize: 16,
+    paddingVertical: 10,
   },
   addButton: {
     position: 'absolute',
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: '#4a90e2',
-    paddingVertical: 14,
     borderRadius: 12,
-    alignItems: 'center',
   },
   addButtonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#fff',
   },
 });
 
