@@ -1,48 +1,39 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useContext } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { PlacesContext } from '../context/PlacesContext';
 
-const AddPlaceScreen = () => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+const PlaceDetailsScreen = () => {
+  const route = useRoute();
   const navigation = useNavigation();
-  const { addPlace } = useContext(PlacesContext);
+  const { placeId } = route.params;
+  const { places } = useContext(PlacesContext);
 
-  const handleAddPlace = () => {
-    if (name.trim()) {
-      addPlace({ name, description });
-      navigation.goBack();
-    }
-  };
+  const place = places.find(p => p.id === placeId);
+  if (!place) return <Text style={styles.error}>Place not found</Text>;
+
+  const hasValidCoordinates =
+    place.coordinates &&
+    typeof place.coordinates.lat === 'number' &&
+    typeof place.coordinates.lng === 'number';
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Add Place</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        placeholderTextColor="#999"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Description"
-        placeholderTextColor="#999"
-        multiline
-        numberOfLines={4}
-        value={description}
-        onChangeText={setDescription}
-      />
+      <Text style={styles.title}>{place.name || place.title}</Text>
+      <Text style={styles.description}>{place.description}</Text>
+      {hasValidCoordinates && (
+        <Text style={styles.coords}>
+          Lat: {place.coordinates.lat.toFixed(4)} | Lng: {place.coordinates.lng.toFixed(4)}
+        </Text>
+      )}
       <Button
         mode="contained"
-        onPress={handleAddPlace}
-        style={styles.button}
-        labelStyle={styles.buttonText}
+        onPress={() => navigation.goBack()}
+        style={styles.backButton}
+        labelStyle={styles.backButtonText}
       >
-        Save
+        ← Back
       </Button>
     </View>
   );
@@ -51,37 +42,41 @@ const AddPlaceScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fefefe',
+    padding: 24,
   },
-  header: {
+  title: {
     fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
+    color: '#222',
+    marginBottom: 14,
   },
-  input: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 14,
+  description: {
     fontSize: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#ddd',
+    lineHeight: 24,
+    color: '#555',
   },
-  textArea: {
-    height: 120,
-    textAlignVertical: 'top',
-  },
-  button: {
+  coords: {
+    fontSize: 14,
+    color: '#777',
     marginTop: 10,
-    borderRadius: 12,
   },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  backButton: {
+    marginTop: 30,
+    borderRadius: 10,
+  },
+  backButtonText: {
     color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  error: {
+    flex: 1,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: 'red',
+    fontSize: 18,
   },
 });
 
-export default AddPlaceScreen;
+export default PlaceDetailsScreen;
