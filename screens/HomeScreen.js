@@ -1,85 +1,96 @@
-import React, { useContext, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
+import React, { useContext, useEffect } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PlacesContext } from '../context/PlacesContext';
-import { Button } from 'react-native-paper';
 
-const PlaceItem = React.memo(({ item, onPress }) => (
-  <Button
-    mode="outlined"
-    style={styles.placeItem}
-    onPress={() => onPress(item.id)}
-    labelStyle={styles.placeLabel}
-    contentStyle={{ height: 50 }}
-  >
-    {item.tytul}
-  </Button>
-));
-
-export default function HomeScreen() {
-  const { miejsca } = useContext(PlacesContext);
+const HomeScreen = () => {
   const navigation = useNavigation();
+  const { places, fetchPlaces } = useContext(PlacesContext);
 
-  const handleItemPress = useCallback(
-    (id) => {
-      navigation.navigate('PlaceDetails', { placeId: id });
-    },
-    [navigation]
+  useEffect(() => {
+    fetchPlaces();
+  }, []);
+
+  const renderPlace = ({ item }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('PlaceDetails', { placeId: item.id })}
+    >
+      <Text style={styles.title}>{item.name}</Text>
+      <Text style={styles.description} numberOfLines={2}>{item.description}</Text>
+    </TouchableOpacity>
   );
-
-  const screenWidth = Dimensions.get('window').width;
 
   return (
-    <View style={[styles.container, { width: screenWidth > 400 ? 380 : '100%' }]}>
-      <Text style={styles.header}>Moje Miejsca</Text>
-      <Button
-        mode="contained"
-        onPress={() => navigation.navigate('AddPlace')}
-        style={styles.addButton}
-        labelStyle={{ fontSize: 16 }}
-      >
-        Dodaj nowe miejsce
-      </Button>
+    <View style={styles.container}>
+      <Text style={styles.header}>Места</Text>
       <FlatList
-        data={miejsca}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <PlaceItem item={item} onPress={handleItemPress} />}
+        data={places}
+        renderItem={renderPlace}
+        keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.list}
       />
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate('AddPlace')}
+      >
+        <Text style={styles.addButtonText}>+ Добавить место</Text>
+      </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignSelf: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f9f9f9',
   },
   header: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: 'center',
     color: '#333',
   },
-  addButton: {
-    marginBottom: 20,
-    borderRadius: 8,
-    paddingVertical: 6,
-  },
   list: {
-    gap: 10,
+    paddingBottom: 80,
   },
-  placeItem: {
-    marginVertical: 5,
-    borderRadius: 6,
-    borderColor: '#6200ee',
-    borderWidth: 1,
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    elevation: 3,
   },
-  placeLabel: {
-    color: '#6200ee',
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 6,
+    color: '#222',
+  },
+  description: {
+    fontSize: 14,
+    color: '#666',
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: '#4a90e2',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
+
+export default HomeScreen;
