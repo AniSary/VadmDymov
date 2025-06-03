@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
@@ -6,11 +6,7 @@ import { PlacesContext } from '../context/PlacesContext';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const { places, fetchPlaces } = useContext(PlacesContext);
-
-  useEffect(() => {
-    fetchPlaces();
-  }, []);
+  const { miejsca } = useContext(PlacesContext);
 
   const renderPlace = ({ item }) => (
     <Button
@@ -19,7 +15,7 @@ const HomeScreen = () => {
       style={styles.card}
       labelStyle={styles.cardText}
     >
-      {item.name}
+      {item.tytul}
     </Button>
   );
 
@@ -27,7 +23,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <Text style={styles.header}>Places</Text>
       <FlatList
-        data={places}
+        data={miejsca}
         renderItem={renderPlace}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.list}

@@ -1,49 +1,83 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
+import * as Location from 'expo-location';
 import { PlacesContext } from '../context/PlacesContext';
 
 const AddPlaceScreen = () => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [tytul, setTytul] = useState('');
+  const [opis, setOpis] = useState('');
+  const [lokalizacja, setLokalizacja] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
-  const { addPlace } = useContext(PlacesContext);
+  const { dodajMiejsce } = useContext(PlacesContext);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          console.log('❌ Brak zgody na dostęp do lokalizacji');
+          setLoading(false);
+          return;
+        }
+
+        const pos = await Location.getCurrentPositionAsync({});
+        setLokalizacja({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+        console.log('📍 Lokalizacja pobrana:', pos.coords);
+      } catch (error) {
+        console.log('❌ Błąd lokalizacji:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const handleAddPlace = () => {
-    if (name.trim()) {
-      addPlace({ name, description });
+    if (tytul.trim()) {
+      dodajMiejsce(tytul, opis, lokalizacja);
       navigation.goBack();
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Add Place</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        placeholderTextColor="#999"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Description"
-        placeholderTextColor="#999"
-        multiline
-        numberOfLines={4}
-        value={description}
-        onChangeText={setDescription}
-      />
-      <Button
-        mode="contained"
-        onPress={handleAddPlace}
-        style={styles.button}
-        labelStyle={styles.buttonText}
-      >
-        Save
-      </Button>
+      <Text style={styles.header}>Dodaj miejsce</Text>
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#4a90e2" style={{ marginTop: 20 }} />
+      ) : (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Tytuł"
+            placeholderTextColor="#999"
+            value={tytul}
+            onChangeText={setTytul}
+          />
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Opis"
+            placeholderTextColor="#999"
+            multiline
+            numberOfLines={4}
+            value={opis}
+            onChangeText={setOpis}
+          />
+          <Button
+            mode="contained"
+            onPress={handleAddPlace}
+            style={styles.button}
+            labelStyle={styles.buttonText}
+          >
+            Zapisz
+          </Button>
+        </>
+      )}
     </View>
   );
 };

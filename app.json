@@ -20,13 +20,14 @@
       }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "com.vadym.miejsca"
-    },
+  "adaptiveIcon": {
+    "foregroundImage": "./assets/adaptive-icon.png",
+    "backgroundColor": "#ffffff"
+  },
+  "edgeToEdgeEnabled": true,
+  "package": "com.vadym.miejsca",
+  "permissions": ["ACCESS_FINE_LOCATION"]
+},
     "web": {
       "favicon": "./assets/favicon.png"
     },

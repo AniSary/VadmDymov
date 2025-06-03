@@ -1,40 +1,34 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
-import { useRoute, useNavigation } from '@react-navigation/native';
 import { PlacesContext } from '../context/PlacesContext';
 
 const PlaceDetailsScreen = () => {
   const route = useRoute();
-  const navigation = useNavigation();
+  const { miejsca } = useContext(PlacesContext);
   const { placeId } = route.params;
-  const { places } = useContext(PlacesContext);
 
-  const place = places.find(p => p.id === placeId);
-  if (!place) return <Text style={styles.error}>Place not found</Text>;
+  const place = miejsca.find(p => p.id === placeId);
 
-  const hasValidCoordinates =
-    place.coordinates &&
-    typeof place.coordinates.lat === 'number' &&
-    typeof place.coordinates.lng === 'number';
+  if (!place) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.header}>Miejsce nie znalezione</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{place.name || place.title}</Text>
-      <Text style={styles.description}>{place.description}</Text>
-      {hasValidCoordinates && (
-        <Text style={styles.coords}>
-          Lat: {place.coordinates.lat.toFixed(4)} | Lng: {place.coordinates.lng.toFixed(4)}
+      <Text style={styles.header}>{place.tytul}</Text>
+      <Text style={styles.description}>{place.opis}</Text>
+      {place.wspolrzedne && (
+        <Text style={styles.coordinates}>
+          📍 {place.wspolrzedne.lat.toFixed(4)}, {place.wspolrzedne.lng.toFixed(4)}
         </Text>
       )}
-      <Button
-        mode="contained"
-        onPress={() => navigation.goBack()}
-        style={styles.backButton}
-        labelStyle={styles.backButtonText}
-      >
-        ← Back
-      </Button>
+      <Text style={styles.date}>{place.data}</Text>
     </View>
   );
 };
@@ -42,40 +36,28 @@ const PlaceDetailsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fefefe',
-    padding: 24,
+    padding: 20,
+    backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 26,
+  header: {
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#222',
-    marginBottom: 14,
+    marginBottom: 20,
+    color: '#2c3e50',
   },
   description: {
     fontSize: 16,
-    lineHeight: 24,
-    color: '#555',
+    marginBottom: 12,
+    color: '#34495e',
   },
-  coords: {
+  coordinates: {
     fontSize: 14,
-    color: '#777',
-    marginTop: 10,
+    color: '#7f8c8d',
+    marginBottom: 8,
   },
-  backButton: {
-    marginTop: 30,
-    borderRadius: 10,
-  },
-  backButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  error: {
-    flex: 1,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    color: 'red',
-    fontSize: 18,
+  date: {
+    fontSize: 14,
+    color: '#95a5a6',
   },
 });
 
