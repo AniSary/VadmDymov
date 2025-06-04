@@ -1,59 +1,53 @@
 import React, { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from 'expo-secure-store';
+import 'react-native-get-random-values'; // нужен для генерации UUID
+import uuid from 'react-native-uuid'; // правильный импорт
 
 export const PlacesContext = createContext();
 
 export const PlacesProvider = ({ children }) => {
-  const [miejsca, setMiejsca] = useState([]);
+  const [places, setPlaces] = useState([]);
 
+  // Загрузка сохранённых мест при старте приложения
   useEffect(() => {
-    const wczytajMiejsca = async () => {
+    const loadPlaces = async () => {
       try {
-        const zapisane = await AsyncStorage.getItem('miejsca');
-        if (zapisane) {
-          setMiejsca(JSON.parse(zapisane));
-          console.log("✅ Przywrócono miejsca z AsyncStorage");
+        const saved = await AsyncStorage.getItem('places');
+        if (saved) {
+          setPlaces(JSON.parse(saved));
+          console.log("✅ Places restored from AsyncStorage");
         }
       } catch (err) {
-        console.log('❌ Błąd przy wczytywaniu miejsc:', err.message);
+        console.log('❌ Error loading places:', err.message);
       }
     };
 
-    wczytajMiejsca();
+    loadPlaces();
   }, []);
 
-  const zapiszBezpiecznie = async (klucz, wartosc) => {
-    try {
-      await SecureStore.setItemAsync(klucz, wartosc);
-    } catch (err) {
-      console.log("❌ Błąd SecureStore:", err.message);
-    }
-  };
-
-  const dodajMiejsce = async (tytul, opis, lokalizacja) => {
-    const nowe = {
-      id: Date.now().toString(),
-      tytul,
-      opis,
-      wspolrzedne: lokalizacja,
-      data: new Date().toLocaleString(),
+  // Добавление нового места
+  const addPlace = async (title, description, location) => {
+    const newPlace = {
+      id: uuid.v4(), // ← правильно
+      title,
+      description,
+      coordinates: location,
+      date: new Date().toLocaleString(),
     };
 
-    const zaktualizowane = [nowe, ...miejsca];
-    setMiejsca(zaktualizowane);
+    const updatedPlaces = [newPlace, ...places];
+    setPlaces(updatedPlaces);
 
     try {
-      await AsyncStorage.setItem('miejsca', JSON.stringify(zaktualizowane));
-      console.log("💾 Miejsce zapisane offline");
-      await zapiszBezpiecznie('ostatnie-miejsce', tytul);
+      await AsyncStorage.setItem('places', JSON.stringify(updatedPlaces));
+      console.log("💾 Place saved locally");
     } catch (err) {
-      console.log('❌ Błąd zapisu do AsyncStorage lub SecureStore:', err.message);
+      console.log('❌ Error saving place:', err.message);
     }
   };
 
   return (
-    <PlacesContext.Provider value={{ miejsca, dodajMiejsce }}>
+    <PlacesContext.Provider value={{ places, addPlace }}>
       {children}
     </PlacesContext.Provider>
   );

@@ -1,36 +1,37 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
 import * as Location from 'expo-location';
 import { PlacesContext } from '../context/PlacesContext';
 
 const AddPlaceScreen = () => {
-  const [tytul, setTytul] = useState('');
-  const [opis, setOpis] = useState('');
-  const [lokalizacja, setLokalizacja] = useState(null);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
-  const { dodajMiejsce } = useContext(PlacesContext);
+  const { addPlace } = useContext(PlacesContext);
 
+  // Получение координат при загрузке
   useEffect(() => {
     (async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-          console.log('❌ Brak zgody na dostęp do lokalizacji');
+          console.log('❌ Permission denied for location');
           setLoading(false);
           return;
         }
 
         const pos = await Location.getCurrentPositionAsync({});
-        setLokalizacja({
+        setLocation({
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
         });
-        console.log('📍 Lokalizacja pobrana:', pos.coords);
+        console.log('📍 Location fetched:', pos.coords);
       } catch (error) {
-        console.log('❌ Błąd lokalizacji:', error.message);
+        console.log('❌ Location error:', error.message);
       } finally {
         setLoading(false);
       }
@@ -38,10 +39,20 @@ const AddPlaceScreen = () => {
   }, []);
 
   const handleAddPlace = () => {
-    if (tytul.trim()) {
-      dodajMiejsce(tytul, opis, lokalizacja);
-      navigation.goBack();
+    if (!location) {
+      Alert.alert('Lokalizacja nie jest jeszcze gotowa');
+      return;
     }
+
+    if (!title.trim()) {
+      Alert.alert('Tytuł nie może być pusty');
+      return;
+    }
+
+    console.log("📥 Called addPlace with:", title, description, location);
+
+    addPlace(title, description, location);
+    navigation.goBack();
   };
 
   return (
@@ -56,8 +67,8 @@ const AddPlaceScreen = () => {
             style={styles.input}
             placeholder="Tytuł"
             placeholderTextColor="#999"
-            value={tytul}
-            onChangeText={setTytul}
+            value={title}
+            onChangeText={setTitle}
           />
           <TextInput
             style={[styles.input, styles.textArea]}
@@ -65,8 +76,8 @@ const AddPlaceScreen = () => {
             placeholderTextColor="#999"
             multiline
             numberOfLines={4}
-            value={opis}
-            onChangeText={setOpis}
+            value={description}
+            onChangeText={setDescription}
           />
           <Button
             mode="contained"

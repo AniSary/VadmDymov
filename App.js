@@ -6,7 +6,7 @@ import { PlacesProvider } from './context/PlacesContext';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Text } from 'react-native';
 
-// 🛡️ Error Boundary для защиты от UI-крэшей
+//  Error Boundary для защиты от UI-крэшей
 class ErrorBoundary extends React.Component {
   state = { hasError: false };
 

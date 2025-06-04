@@ -1,64 +1,100 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import React from 'react';
+import { View, Text, ScrollView, Share, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { PlacesContext } from '../context/PlacesContext';
 
-const PlaceDetailsScreen = () => {
-  const route = useRoute();
-  const { miejsca } = useContext(PlacesContext);
-  const { placeId } = route.params;
-
-  const place = miejsca.find(p => p.id === placeId);
+export default function PlaceDetailsScreen({ route }) {
+  const { place } = route.params;
 
   if (!place) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.header}>Miejsce nie znalezione</Text>
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>Nie znaleziono miejsca</Text>
       </View>
     );
   }
 
+  const handleShare = async () => {
+    try {
+      const message = `
+📍 Miejsce: ${place.title}
+📝 Opis: ${place.description}
+📍 Lokalizacja: ${
+        typeof place.coordinates?.lat === 'number' && typeof place.coordinates?.lng === 'number'
+          ? `${place.coordinates.lat.toFixed(4)}, ${place.coordinates.lng.toFixed(4)}`
+          : 'Brak danych'
+      }
+🕒 Dodano: ${place.date}
+`;
+      await Share.share({ message });
+    } catch (error) {
+      console.log('❌ Błąd przy udostępnianiu:', error.message);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>{place.tytul}</Text>
-      <Text style={styles.description}>{place.opis}</Text>
-      {place.wspolrzedne && (
-        <Text style={styles.coordinates}>
-          📍 {place.wspolrzedne.lat.toFixed(4)}, {place.wspolrzedne.lng.toFixed(4)}
-        </Text>
-      )}
-      <Text style={styles.date}>{place.data}</Text>
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>{place.title}</Text>
+      <Text style={styles.description}>{place.description}</Text>
+      <Text style={styles.coords}>
+        Lokalizacja:{' '}
+        {typeof place.coordinates?.lat === 'number' && typeof place.coordinates?.lng === 'number'
+          ? `${place.coordinates.lat.toFixed(4)}, ${place.coordinates.lng.toFixed(4)}`
+          : 'Brak danych'}
+      </Text>
+      <Text style={styles.date}>Dodano: {place.date}</Text>
+
+      <Button
+        mode="contained"
+        onPress={handleShare}
+        style={styles.button}
+        labelStyle={styles.buttonLabel}
+      >
+        Udostępnij
+      </Button>
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
     backgroundColor: '#fff',
   },
-  header: {
-    fontSize: 28,
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    fontSize: 18,
+    color: 'red',
+  },
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#2c3e50',
+    marginBottom: 12,
   },
   description: {
     fontSize: 16,
     marginBottom: 12,
-    color: '#34495e',
   },
-  coordinates: {
+  coords: {
     fontSize: 14,
-    color: '#7f8c8d',
-    marginBottom: 8,
+    marginBottom: 12,
+    fontStyle: 'italic',
   },
   date: {
     fontSize: 14,
-    color: '#95a5a6',
+    color: '#888',
+    marginBottom: 20,
+  },
+  button: {
+    borderRadius: 10,
+    backgroundColor: '#6200ee',
+    paddingVertical: 8,
+  },
+  buttonLabel: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
-
-export default PlaceDetailsScreen;
