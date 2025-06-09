@@ -9,7 +9,6 @@ Aplikacja stworzona w React Native (Expo), umożliwiająca użytkownikom dodawan
 - AsyncStorage
 - React Navigation
 - React Native Paper
-- Expo Camera
 - ESLint i Prettier
 
 ## Kryteria projektu
