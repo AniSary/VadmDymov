@@ -1,9 +1,19 @@
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { useContext } from 'react';
+import { PlacesContext } from '../context/PlacesContext';
 import { View, Text, ScrollView, Share, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 
 export default function PlaceDetailsScreen({ route }) {
   const { place } = route.params;
+  const navigation = useNavigation();
+  const { deletePlace } = useContext(PlacesContext);
+
+  const handleDelete = () => {
+    deletePlace(place.id);
+    navigation.goBack();
+  };
 
   if (!place) {
     return (
@@ -50,6 +60,14 @@ export default function PlaceDetailsScreen({ route }) {
         labelStyle={styles.buttonLabel}
       >
         Udostępnij
+      </Button>
+
+      <Button
+        mode="contained"
+        onPress={handleDelete}
+        style={{ marginTop: 16, backgroundColor: '#d32f2f' }}
+      >
+        Usuń miejsce
       </Button>
     </ScrollView>
   );

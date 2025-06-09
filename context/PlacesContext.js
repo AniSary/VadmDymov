@@ -28,7 +28,7 @@ export const PlacesProvider = ({ children }) => {
   // Добавление нового места
   const addPlace = async (title, description, location) => {
     const newPlace = {
-      id: uuid.v4(), // ← правильно
+      id: uuid.v4(),
       title,
       description,
       coordinates: location,
@@ -46,8 +46,19 @@ export const PlacesProvider = ({ children }) => {
     }
   };
 
+  const deletePlace = async (id) => {
+    try {
+      const updated = places.filter((p) => p.id !== id);
+      setPlaces(updated);
+      await AsyncStorage.setItem('places', JSON.stringify(updated));
+      console.log('🗑️ Place deleted:', id);
+    } catch (err) {
+      console.log('❌ Error deleting place:', err.message);
+    }
+  };
+
   return (
-    <PlacesContext.Provider value={{ places, addPlace }}>
+    <PlacesContext.Provider value={{ places, addPlace, deletePlace }}>
       {children}
     </PlacesContext.Provider>
   );
